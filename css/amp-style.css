@@ -1,0 +1,12 @@
+/* Your CSS here. */
+.main-menu .sub-menu{
+    display: block;
+}
+
+.menu-modal.show-modal {
+    left: 0;
+    opacity: 1;
+    right: 0;
+    transition: opacity .25s ease-out;
+    top: 100px;
+}
