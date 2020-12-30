@@ -48,6 +48,12 @@ class Sanitizer extends AMP_Base_Sanitizer {
 						$main_action_element
 					);
 
+					// Added role and tabindex.
+					if ( ! in_array( $action_element, array( 'a', 'button' ), true ) ) {
+						$main_action_element->setAttribute( 'role', 'button' );
+						$main_action_element->setAttribute( 'tabindex', '0' );
+					}
+
 					$main_action_element->setAttribute( 'on', 'tap:AMP.setState( { ' . $unique_id . ': ! ' . $unique_id . ' } )' );
 
 					$main_action_element->setAttribute(
