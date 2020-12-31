@@ -27,7 +27,7 @@ class Sanitizer extends AMP_Base_Sanitizer {
 
 			foreach ( $amp_compat_settings as $amp_compat_setting ) {
 
-				$unique_id                   = wp_unique_id( 'mobileMenuActive_' );
+				$unique_id                   = wp_unique_id( 'amp_toggle_' );
 				$element                     = $amp_compat_setting['element'];
 				$element_class               = $amp_compat_setting['element_class'];
 				$element_toggle_class        = $amp_compat_setting['element_toggle_class'];
