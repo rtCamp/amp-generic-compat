@@ -20,14 +20,14 @@ The generic plugin to add AMP compatibility to your theme for toggle mechanism.
 ├── admin
 │   └── css
 │       └──  amp-admin.css
-│   └── js
+│   ├── js
 │       └──  amp-admin.js
-└──  amp-generic-settings.php
+│   └──amp-generic-settings.php
 ├── css
 │   └── amp-style.css
 ├── sanitizers
 │   └── class-sanitizer.php
-├── aamp-generic-compat.php
+├── amp-generic-compat.php
 └── README.md
 ```
 ## Sanitizers
