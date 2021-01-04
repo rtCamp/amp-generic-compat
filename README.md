@@ -18,11 +18,11 @@ The generic plugin to add AMP compatibility to your theme for toggle mechanism.
 ```markdown
 .
 ├── admin
-│   └── css
-│       └──  amp-admin.css
+│   ├── css
+│   │   └──  amp-admin.css
 │   ├── js
-│       └──  amp-admin.js
-│   └──amp-generic-settings.php
+│   │   └──  amp-admin.js
+│   └── amp-generic-settings.php
 ├── css
 │   └── amp-style.css
 ├── sanitizers
