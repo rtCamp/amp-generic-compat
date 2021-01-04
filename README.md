@@ -1,24 +1,34 @@
-# AMP Skeleton Compatability
+# AMP Generic Compatibility
 
-The skeleton plugin to add AMP compatibility to your theme.
+The generic plugin to add AMP compatibility to your theme for toggle mechanism.
 
-## Notes
+## How to use the plugin?
 
-- Rename plugin's folder to amp-skeleton-compat when you use this skeleton.
-- Replace Namespace AMP_Plugin_Name_Compat by your namespace in every file. 
-- Change Plugin Name
-- Add your name as author
-- Add your plugin URI
+- Make sure you switch to transtional mode first.
+- Check non-AMP Mobile version and make sure it works.
+- Open you browsers developer tool.
+- Check element which needs to toggle. make note of element, it's class and toggle class.
+- Check action element which trigger toggle, make not of action element, it's class and toggle class.
+- You can add multiple elements by clicking + button
+- You can remove elements by clicking - button
+- You can enable/ disable plugin by clicking checkbox
 
 ## Plugin Structure
 
 ```markdown
 .
+├── admin
+│   └── css
+│       └──  amp-admin.css
+│   └── js
+│       └──  amp-admin.js
+└──  amp-generic-settings.php
 ├── css
-│   ├── amp-style.css
+│   └── amp-style.css
 ├── sanitizers
-│   ├── class-sanitizer.php
-└── amp-skeleton-compat.php
+│   └── class-sanitizer.php
+├── aamp-generic-compat.php
+└── README.md
 ```
 ## Sanitizers
 

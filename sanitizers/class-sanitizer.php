@@ -58,12 +58,12 @@ class Sanitizer extends AMP_Base_Sanitizer {
 
 					$main_action_element->setAttribute(
 						'data-amp-bind-class',
-						sprintf( '%1$s + ( ' . $unique_id . ' ? " %2$s" : "" )', wp_json_encode( $main_action_element->getAttribute( 'class' ) ), $element_toggle_class )
+						sprintf( '%1$s + ( ' . $unique_id . ' ? " %2$s" : "" )', wp_json_encode( $main_action_element->getAttribute( 'class' ) ), $action_element_toggle_class )
 					);
 
 					$main_element->setAttribute(
 						'data-amp-bind-class',
-						sprintf( '%1$s + ( ' . $unique_id . ' ? " %2$s" : "" )', wp_json_encode( $main_element->getAttribute( 'class' ) ), $action_element_toggle_class )
+						sprintf( '%1$s + ( ' . $unique_id . ' ? " %2$s" : "" )', wp_json_encode( $main_element->getAttribute( 'class' ) ), $element_toggle_class )
 					);
 				}
 			}

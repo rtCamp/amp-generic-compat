@@ -10,3 +10,7 @@
     transition: opacity .25s ease-out;
     top: 100px;
 }
+
+.mobile-menu active.show {
+    display: block;
+}
