@@ -11,6 +11,6 @@
     top: 100px;
 }
 
-.mobile-menu active.show {
+.mobile-menu.show {
     display: block;
 }
