@@ -33,7 +33,7 @@ function register_amp_compat_admin_scripts( $hook ) {
 	$amp_settings = false;
 
 	if ( 'amp-compatibility_page_amp-compatibility-settings-js' === $hook ) {
-		$amp_settings = wp_enqueue_code_editor( array( 'type' => 'text/js' ) );
+		$amp_settings = wp_enqueue_code_editor( array( 'type' => 'text/javascript' ) );
 		wp_add_inline_script(
 			'code-editor',
 			sprintf(
@@ -54,11 +54,6 @@ function register_amp_compat_admin_scripts( $hook ) {
 		);
 	}
 
-	// Bail if user disabled CodeMirror.
-	if ( false === $amp_settings ) {
-		return;
-	}
-
 	wp_enqueue_script( 'amp-generic-settings', plugin_dir_url( __FILE__ ) . 'js/amp-admin.js', array( 'jquery' ), rand(), true );
 	wp_enqueue_style( 'amp-generic-settings', plugin_dir_url( __FILE__ ) . 'css/amp-admin.css', '', rand() );
 }
@@ -67,7 +62,8 @@ function register_amp_compat_admin_scripts( $hook ) {
  * Add AMP javascript.
  */
 function amp_compatibility_page_js() {
-	$amp_compat_enable_js = get_option( 'amp_compat_js' );
+	$amp_compat_enable_js = get_option( 'amp_compat_enable_js' );
+	$amp_compat_js        = get_option( 'amp_compat_js' );
 	?>
 	<div class="wrap">
 		<h2><?php esc_html_e( 'Add Javascript to AMP pages' ); ?></h2>
@@ -94,7 +90,7 @@ function amp_compatibility_page_js() {
 					</tr>
 					<tr>
 						<td width="80%">
-							<textarea name="amp_compat_js" id="amp-compat-js"></textarea>
+							<textarea name="amp_compat_js" id="amp-compat-js"><?php echo $amp_compat_js; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></textarea>
 						</td>
 						<td width="20%">
 							<ol>
@@ -110,8 +106,8 @@ function amp_compatibility_page_js() {
 					</tr>
 				</table>
 				<div class="clearfix">
-					<?php wp_nonce_field( 'amp_compat_save_settings_action', 'amp_compat_save_settings_action' ); ?>
-					<button type="submit" class="button button-primary" name="save_amp_compat_settings" value="1"><?php esc_html_e( 'Save' ); ?></button>
+					<?php wp_nonce_field( 'amp_compat_save_js_settings_action', 'amp_compat_save_js_settings_action' ); ?>
+					<button type="submit" class="button button-primary" name="save_amp_compat_settings_js" value="1"><?php esc_html_e( 'Save' ); ?></button>
 				</div>
 			</form>	
 		</div>
@@ -119,12 +115,12 @@ function amp_compatibility_page_js() {
 	<?php
 }
 
-
 /**
  * Add AMP javascript.
  */
 function amp_compatibility_page_css() {
-	$amp_compat_enable_js = get_option( 'amp_compat_css' );
+	$amp_compat_enable_css = get_option( 'amp_compat_enable_css' );
+	$amp_compat_css        = get_option( 'amp_compat_css' );
 	?>
 	<div class="wrap">
 		<h2><?php esc_html_e( 'Add CSS to AMP pages' ); ?></h2>
@@ -136,7 +132,7 @@ function amp_compatibility_page_css() {
 							<?php esc_html_e( 'Enable' ); ?>
 						</th>
 						<td>
-							<input type="checkbox" value="1" name="amp_compat_enable_css" <?php checked( '1', $amp_compat_enable_js, true ); ?> />
+							<input type="checkbox" value="1" name="amp_compat_enable_css" <?php checked( '1', $amp_compat_enable_css, true ); ?> />
 						</td>
 					</tr>
 				</table>
@@ -151,7 +147,7 @@ function amp_compatibility_page_css() {
 					</tr>
 					<tr>
 						<td width="80%">
-							<textarea name="amp_compat_css" id="amp-compat-css"></textarea>
+							<textarea name="amp_compat_css" id="amp-compat-css"><?php echo $amp_compat_css; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></textarea>
 						</td>
 						<td width="20%">
 							<ol>
@@ -167,8 +163,8 @@ function amp_compatibility_page_css() {
 					</tr>
 				</table>
 				<div class="clearfix">
-					<?php wp_nonce_field( 'amp_compat_save_settings_action', 'amp_compat_save_settings_action' ); ?>
-					<button type="submit" class="button button-primary" name="save_amp_compat_settings" value="1"><?php esc_html_e( 'Save' ); ?></button>
+					<?php wp_nonce_field( 'amp_compat_save_css_settings_action', 'amp_compat_save_css_settings_action' ); ?>
+					<button type="submit" class="button button-primary" name="save_amp_compat_settings_css" value="1"><?php esc_html_e( 'Save' ); ?></button>
 				</div>
 			</form>	
 		</div>
@@ -298,6 +294,13 @@ function amp_compatibility_page() {
  * Save AMP Compat settings.
  */
 function amp_save_settings() {
+
+	// Save javascript.
+	amp_save_settings_js();
+
+	// Save CSS.
+	amp_save_settings_css();
+
 	$save_amp_compat_settings = filter_input( INPUT_POST, 'save_amp_compat_settings', FILTER_SANITIZE_STRING );
 	if ( empty( $save_amp_compat_settings ) ) {
 		return false;
@@ -325,6 +328,73 @@ function amp_save_settings() {
 		update_option( 'amp_compat_settings', '' );
 		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__error' );
 	}
+}
+
+/**
+ * Save AMP Compat settings JS.
+ */
+function amp_save_settings_js() {
+	$save_amp_compat_settings = filter_input( INPUT_POST, 'save_amp_compat_settings_js', FILTER_SANITIZE_STRING );
+	if ( empty( $save_amp_compat_settings ) ) {
+		return false;
+	}
+
+	$nonce = filter_input( INPUT_POST, 'amp_compat_save_js_settings_action', FILTER_SANITIZE_STRING );
+	if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'amp_compat_save_js_settings_action' ) ) {
+		wp_die( 'Sorry, your nonce did not verify.' );
+	}
+
+	$amp_compat_enable_js = filter_input( INPUT_POST, 'amp_compat_enable_js', FILTER_SANITIZE_NUMBER_INT );
+
+	if ( ! empty( $amp_compat_enable_js ) ) {
+		update_option( 'amp_compat_enable_js', $amp_compat_enable_js );
+	} else {
+		update_option( 'amp_compat_enable_js', '' );
+	}
+
+	$amp_compat_js = filter_input( INPUT_POST, 'amp_compat_js', FILTER_UNSAFE_RAW );
+
+	if ( ! empty( $amp_compat_js ) ) {
+		update_option( 'amp_compat_js', $amp_compat_js );
+		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__success' );
+	} else {
+		update_option( 'amp_compat_js', '' );
+		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__error' );
+	}
+}
+
+/**
+ * Save AMP Compat settings CSS.
+ */
+function amp_save_settings_css() {
+	$save_amp_compat_settings = filter_input( INPUT_POST, 'save_amp_compat_settings_css', FILTER_SANITIZE_STRING );
+	if ( empty( $save_amp_compat_settings ) ) {
+		return false;
+	}
+
+	$nonce = filter_input( INPUT_POST, 'amp_compat_save_css_settings_action', FILTER_SANITIZE_STRING );
+	if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'amp_compat_save_css_settings_action' ) ) {
+		wp_die( 'Sorry, your nonce did not verify.' );
+	}
+
+	$amp_compat_enable_css = filter_input( INPUT_POST, 'amp_compat_enable_css', FILTER_SANITIZE_NUMBER_INT );
+
+	if ( ! empty( $amp_compat_enable_css ) ) {
+		update_option( 'amp_compat_enable_css', $amp_compat_enable_css );
+	} else {
+		update_option( 'amp_compat_enable_css', '' );
+	}
+
+	$amp_compat_css = filter_input( INPUT_POST, 'amp_compat_css', FILTER_UNSAFE_RAW );
+
+	if ( ! empty( $amp_compat_css ) ) {
+		update_option( 'amp_compat_css', $amp_compat_css );
+		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__success' );
+	} else {
+		update_option( 'amp_compat_css', '' );
+		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__error' );
+	}
+
 }
 
 /**
