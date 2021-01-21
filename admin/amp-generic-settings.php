@@ -85,7 +85,7 @@ function amp_compatibility_page_js() {
 							<?php esc_html_e( 'code box' ); ?>
 						</th>
 						<th>
-							<?php esc_html_e( 'Rules' ); ?>
+							<?php esc_html_e( 'Rules / info' ); ?>
 						</th>
 					</tr>
 					<tr>
@@ -94,13 +94,18 @@ function amp_compatibility_page_js() {
 						</td>
 						<td width="20%">
 							<ol>
-								<li>Element getters like <code>getElementByName()</code>, <code>getElementsByClassName()</code>, <code>getElementsByTagName()</code>, <code>childNodes()</code>, <code>parentNode()</code>, and <code>lastChild()</code></li>
-								<li>Mutators like <code>createTextNode()</code>, <code>appendChild()</code>, <code>insertBefore()</code>, <code>removeChild()</code>, and <code>replaceChild()</code></li>
-								<li>Methods involving events like <code>addEventListener()</code>, <code>removeEventListener()</code>, and <code>createEvent()</code></li>
-								<li>Property and attribute getters like <code>getAttribute()</code>, <code>hasAttribute()</code></li>
-								<li>Event properties like <code>Event.target</code>, <code>Event.type</code>, and <code>Event.bubbles</code></li>
-								<li>Element properties like <code>attributes</code>, <code>id</code>, <code>outerHTML</code>, <code>textContent</code>, <code>value</code>, <code>classList</code>, and <code>className</code></li>
-								<li>And many more.</li>
+								<li>
+									<?php esc_html_e( 'Your JavaScript can access the area of the page wrapped within the <amp-script> component. amp-script copies the component\'s children to a virtual DOM. Your code can access that virtual DOM as document.body.' ); ?>
+								</li>
+								<li>
+									<?php esc_html_e( 'The amp-script component allows you to run custom JavaScript. To maintain AMP\'s performance guarantees, your code runs in a Web Worker, and certain restrictions apply.' ); ?>
+								</li>
+								<li>
+									<?php esc_html_e( 'Presently, libraries like jQuery will not work with amp-script without modification, as they use unsupported DOM APIs. ' ); ?>
+								</li>
+								<li>
+									<?php echo sprintf( '%1$s <a href="https://github.com/ampproject/worker-dom/blob/master/web_compat_table.md" target="_blank">%2$s</a> ', esc_html__( 'For a complete list of supported DOM APIs, see the' ), esc_html__( 'API compatibility table.' ) ); ?>
+								</li>
 							</ol>
 						</td>
 					</tr>
@@ -110,6 +115,9 @@ function amp_compatibility_page_js() {
 					<button type="submit" class="button button-primary" name="save_amp_compat_settings_js" value="1"><?php esc_html_e( 'Save' ); ?></button>
 				</div>
 			</form>	
+			<div class="clearfix">
+
+			</div>
 		</div>
 	</div>
 	<?php
@@ -142,7 +150,7 @@ function amp_compatibility_page_css() {
 							<?php esc_html_e( 'code box' ); ?>
 						</th>
 						<th>
-							<?php esc_html_e( 'Rules' ); ?>
+							<?php esc_html_e( 'Rules/Info' ); ?>
 						</th>
 					</tr>
 					<tr>
@@ -151,13 +159,12 @@ function amp_compatibility_page_css() {
 						</td>
 						<td width="20%">
 							<ol>
-								<li>Element getters like <code>getElementByName()</code>, <code>getElementsByClassName()</code>, <code>getElementsByTagName()</code>, <code>childNodes()</code>, <code>parentNode()</code>, and <code>lastChild()</code></li>
-								<li>Mutators like <code>createTextNode()</code>, <code>appendChild()</code>, <code>insertBefore()</code>, <code>removeChild()</code>, and <code>replaceChild()</code></li>
-								<li>Methods involving events like <code>addEventListener()</code>, <code>removeEventListener()</code>, and <code>createEvent()</code></li>
-								<li>Property and attribute getters like <code>getAttribute()</code>, <code>hasAttribute()</code></li>
-								<li>Event properties like <code>Event.target</code>, <code>Event.type</code>, and <code>Event.bubbles</code></li>
-								<li>Element properties like <code>attributes</code>, <code>id</code>, <code>outerHTML</code>, <code>textContent</code>, <code>value</code>, <code>classList</code>, and <code>className</code></li>
-								<li>And many more.</li>
+								<li><?php esc_html_e( 'AMP limits some CSS styles and total bytes to 75,000 per page. Your theme has already added CSS, so make sure to check your limits' ); ?></li>
+								<li><?php esc_html_e( 'Use and reference to !important is not allowed. This is a necessary requirement to enable AMP to enforce its element sizing rules.' ); ?></li>
+								<li><?php echo '<i>i-amphtml-</i> class and <i>i-amphtml-</i> tag names are not allowed and reserved for AMP framework'; ?></li>
+								<li><?php echo 'Only GPU-accelerated properties (currently <b>opacity</b>, <b>transform</b> and <b>-vendorPrefix-transform</b>) are allowed.'; ?></li>
+								<li><?php esc_html_e( 'Avoid using @keyframes and transition properties' ); ?></li>
+								<li><?php esc_html_e( 'AMP pages can’t include external stylesheets, with the exception of custom fonts.' ); ?></li>
 							</ol>
 						</td>
 					</tr>
