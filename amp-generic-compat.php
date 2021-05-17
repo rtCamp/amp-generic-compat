@@ -41,19 +41,27 @@ function add_hooks() {
 	 *  Keep this if you are using theme.
 	 */
 	if ( is_amp() ) {
-		/**
-		 *  Remove action which might add scripts or inline scripts.
-		 *
-		 * @see https://developer.wordpress.org/reference/functions/remove_action/
-		 */
-		remove_action( 'wp_head', 'enequeue_themes_scripts', 1 );
 
-		/**
-		 * The Action will override the scripts and styles.
-		 *
-		 * @see https://developer.wordpress.org/reference/hooks/wp_enqueue_scripts/
-		 */
-		add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\override_scripts_and_styles', 11 );
+		$amp_compat_enable_css = get_option( 'amp_compat_enable_css' );
+
+		if ( ! empty( $amp_compat_enable_css ) ) {
+			add_action( 'wp_head', __NAMESPACE__ . '\amp_custom_style' );
+			add_action( 'amp_post_template_css', __NAMESPACE__ . '\amp_custom_style' );
+		}
+
+		$amp_compat_enable_js = get_option( 'amp_compat_enable_js' );
+
+		if ( ! empty( $amp_compat_enable_js ) ) {
+			if ( function_exists( 'amp_is_legacy' ) && amp_is_legacy() ) {
+				add_action( 'amp_post_template_head', __NAMESPACE__ . '\amp_script_hash' );
+				add_action( 'amp_post_template_body_open', __NAMESPACE__ . '\amp_script_open', PHP_INT_MIN );
+				add_action( 'amp_post_template_footer', __NAMESPACE__ . '\amp_script_close', PHP_INT_MAX );
+			} else {
+				add_action( 'wp_head', __NAMESPACE__ . '\amp_script_hash' );
+				add_action( 'wp_body_open', __NAMESPACE__ . '\amp_script_open', PHP_INT_MIN );
+				add_action( 'wp_footer', __NAMESPACE__ . '\amp_script_close', PHP_INT_MAX );
+			}
+		}
 
 		$amp_compat_enable = get_option( 'amp_compat_enable' );
 
@@ -71,15 +79,53 @@ function add_hooks() {
 
 add_action( 'wp', __NAMESPACE__ . '\add_hooks' );
 
+
 /**
- * Remove enqueued JS.
- *
- * @see lovecraft_load_javascript_files()
+ * Add AMP Scipt has meta.
  */
-function override_scripts_and_styles() {
+function amp_script_hash() {
+	$amp_compat_js = get_option( 'amp_compat_js' );
+	printf( '<meta name="amp-script-src" content="%s">', esc_attr( amp_generate_script_hash( $amp_compat_js ) ) );
+}
 
-	wp_enqueue_style( 'amp-generic-compat', plugin_dir_url( __FILE__ ) . '/css/amp-style.css', '', rand() );
+/**
+ * AMP Script Open tag.
+ */
+function amp_script_open() {
 
+	echo '<amp-script layout="container" script="amp_compat_js">';
+
+}
+
+
+/**
+ * AMP Script close.
+ */
+function amp_script_close() {
+	$amp_compat_js = get_option( 'amp_compat_js' );
+	echo '</amp-script>';
+	echo '<script id="amp_compat_js" type="text/plain" target="amp-script"> ' . $amp_compat_js . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+/**
+ * Add AMP custom style.
+ */
+function amp_custom_style() {
+
+	$amp_compat_css  = get_option( 'amp_compat_css' );
+	$amp_compat_css .= 'amp-script { opacity:1};';
+
+	if ( function_exists( 'amp_is_legacy' ) && amp_is_legacy() ) {
+
+		echo $amp_compat_css; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+	} else {
+		?>
+		<style type="text/css">
+			<?php echo $amp_compat_css; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</style>
+		<?php
+	}
 }
 
 /**
