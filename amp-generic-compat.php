@@ -11,7 +11,7 @@
  * Plugin Name: AMP Generic Compat
  * Plugin URI: https://wpindia.co.in/
  * Description: Plugin to add <a href="https://wordpress.org/plugins/amp/">AMP</a> plugin compatibility for generic elements like navigation and search.
- * Version: 0.1
+ * Version: 0.2
  * Author: milindmore22
  * Author URI: https://wpindia.co.in/
  * License: GNU General Public License v2 (or later)
@@ -29,7 +29,7 @@ require_once __DIR__ . '/admin/amp-generic-settings.php';
  * @return bool Is AMP.
  */
 function is_amp() {
-	return function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
+	return function_exists( 'amp_is_request' ) && amp_is_request();
 }
 
 /**
@@ -54,12 +54,12 @@ function add_hooks() {
 		if ( ! empty( $amp_compat_enable_js ) ) {
 			if ( function_exists( 'amp_is_legacy' ) && amp_is_legacy() ) {
 				add_action( 'amp_post_template_head', __NAMESPACE__ . '\amp_script_hash' );
-				add_action( 'amp_post_template_body_open', __NAMESPACE__ . '\amp_script_open', PHP_INT_MIN );
-				add_action( 'amp_post_template_footer', __NAMESPACE__ . '\amp_script_close', PHP_INT_MAX );
+				add_action( 'amp_post_template_body_open', __NAMESPACE__ . '\amp_script_open', PHP_INT_MAX );
+				add_action( 'amp_post_template_footer', __NAMESPACE__ . '\amp_script_close', PHP_INT_MIN );
 			} else {
 				add_action( 'wp_head', __NAMESPACE__ . '\amp_script_hash' );
-				add_action( 'wp_body_open', __NAMESPACE__ . '\amp_script_open', PHP_INT_MIN );
-				add_action( 'wp_footer', __NAMESPACE__ . '\amp_script_close', PHP_INT_MAX );
+				add_action( 'wp_body_open', __NAMESPACE__ . '\amp_script_open', PHP_INT_MAX );
+				add_action( 'wp_footer', __NAMESPACE__ . '\amp_script_close', PHP_INT_MIN );
 			}
 		}
 
@@ -84,8 +84,13 @@ add_action( 'wp', __NAMESPACE__ . '\add_hooks' );
  * Add AMP Scipt has meta.
  */
 function amp_script_hash() {
-	$amp_compat_js = get_option( 'amp_compat_js' );
-	printf( '<meta name="amp-script-src" content="%s">', esc_attr( amp_generate_script_hash( $amp_compat_js ) ) );
+	$amp_compat_js_hash = get_option( 'amp_compat_js_hash' );
+
+	if ( empty( $amp_compat_js_hash ) ) {
+		return;
+	}
+
+	printf( '<meta name="amp-script-src" content="%s">', esc_attr( $amp_compat_js_hash ) );
 }
 
 /**

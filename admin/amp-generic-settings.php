@@ -64,6 +64,7 @@ function register_amp_compat_admin_scripts( $hook ) {
 function amp_compatibility_page_js() {
 	$amp_compat_enable_js = get_option( 'amp_compat_enable_js' );
 	$amp_compat_js        = get_option( 'amp_compat_js' );
+	$amp_compat_js_hash   = get_option( 'amp_compat_js_hash' );
 	?>
 	<div class="wrap">
 		<h2><?php esc_html_e( 'Add Javascript to AMP pages' ); ?></h2>
@@ -76,6 +77,15 @@ function amp_compatibility_page_js() {
 						</th>
 						<td>
 							<input type="checkbox" value="1" name="amp_compat_enable_js" <?php checked( '1', $amp_compat_enable_js, true ); ?> />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<?php esc_html_e( 'AMP Script Hash' ); ?>
+						</th>
+						<td>
+							<input type="text" size="50" placeholder="sha384-fake_hash_of_remote_js sha384-fake_hash_of_local_script" value="<?php echo esc_attr( $amp_compat_js_hash ); ?>" name="amp_compat_js_hash" />
+							<p class="description"><?php esc_html_e( 'Logout and open AMP page -> Open browser console -> check error with amp-script hash copy the "sha384-" hash and paste it here (do not add meta tag just add hash)' ); ?> <a href="https://prnt.sc/1fnpesi"><?php esc_html_e( 'Screenshot' ); ?></a></p>
 						</td>
 					</tr>
 				</table>
@@ -366,6 +376,16 @@ function amp_save_settings_js() {
 		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__success' );
 	} else {
 		update_option( 'amp_compat_js', '' );
+		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__error' );
+	}
+
+	$amp_compat_js_hash = filter_input( INPUT_POST, 'amp_compat_js_hash', FILTER_UNSAFE_RAW );
+
+	if ( ! empty( $amp_compat_js_hash ) ) {
+		update_option( 'amp_compat_js_hash', $amp_compat_js_hash );
+		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__success' );
+	} else {
+		update_option( 'amp_compat_js_hash', '' );
 		add_action( 'admin_notices', __NAMESPACE__ . '\amp_compat_admin_notice__error' );
 	}
 }
