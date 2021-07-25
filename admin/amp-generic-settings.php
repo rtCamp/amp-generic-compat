@@ -85,7 +85,7 @@ function amp_compatibility_page_js() {
 						</th>
 						<td>
 							<input type="text" size="50" placeholder="sha384-fake_hash_of_remote_js sha384-fake_hash_of_local_script" value="<?php echo esc_attr( $amp_compat_js_hash ); ?>" name="amp_compat_js_hash" />
-							<p class="description"><?php esc_html_e( 'Logout and open AMP page -> Open browser console -> check error with amp-script hash copy the "sha384-" hash and paste it here (do not add meta tag just add hash)' ); ?> <a href="https://prnt.sc/1fnpesi"><?php esc_html_e( 'Screenshot' ); ?></a></p>
+							<p class="description"><?php esc_html_e( 'Logout and open AMP page -> Open browser console -> check error with amp-script hash copy the "sha384-" hash and paste it here (do not add meta tag just add hash)' ); ?> <a href="https://prnt.sc/1fnz992"><?php esc_html_e( 'Screenshot' ); ?></a></p>
 						</td>
 					</tr>
 				</table>
